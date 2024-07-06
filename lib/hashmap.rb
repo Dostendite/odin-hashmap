@@ -63,4 +63,17 @@ class HashMap
 
     @buckets[hash_index] = node_to_insert
   end
+
+  def get(key)
+    hash_code = hash(key)
+    hash_index = hash_code % @capacity
+
+    node_inside = @buckets[hash_index]
+
+    return nil if node_inside.nil?
+    return unless key == node_inside.key
+
+    # binding.pry
+    node_inside.value
+  end
 end
