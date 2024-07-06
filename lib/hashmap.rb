@@ -1,9 +1,11 @@
 require "pry-byebug"
 
+# Hashmap implementation
 class HashMap
   attr_reader :buckets, :capacity
 
   def initialize(capacity = 16, load_factor = 0.8)
+    @buckets_in_use = 0
     @buckets = Array.new(capacity, nil)
     @capacity = capacity
     @load_factor = load_factor
@@ -14,7 +16,7 @@ class HashMap
   # only takes in string type keys
 
   def to_s
-    @buckets.each do |idx, node|
+    @buckets.each_with_index do |node, idx|
       puts "Node {#{idx}} -> #{node}"
     end
   end
@@ -23,16 +25,18 @@ class HashMap
     hash_code = 0
     prime_number = 89
 
-    key.each_char { |char| (prime_number * hash_code) + char.ord }
+    key.each_char { |char| hash_code = prime_number * hash_code + char.ord }
     hash_code
   end
 
   def rehash
     @buckets.each_with_index do |bucket, idx|
       next if bucket.nil?
+
       node = @buckets[idx]
 
       # empty bucket
+      @buckets_in_use += 1
       bucket = nil
 
       # rehash
@@ -43,14 +47,15 @@ class HashMap
   def update_capacity
     capacity_limit = (@capacity * @load_factor).floor(1)
 
-    return unless @capacity > capacity_limit
+    return unless @buckets_in_use > capacity_limit
 
     @buckets += Array.new(@capacity, nil)
     @capacity *= 2
   end
 
   def set(key, value)
-    @capacity += 1
+    @buckets_in_use += 1
+
     update_capacity
     node_to_insert = Node.new(key, value)
     hash_code = hash(key)
