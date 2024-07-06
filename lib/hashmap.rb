@@ -16,17 +16,25 @@ class HashMap
   # only takes in string type keys
 
   def to_s
+    ret_s = ""
     @buckets.each_with_index do |node, idx|
-      puts "Node {#{idx}} -> #{node}"
+      next if node.nil?
+
+      ret_s << "Node {#{idx}} -> #{node}\n"
     end
+    ret_s
   end
 
-  def hash(key)
+  def get_hash_code(key)
     hash_code = 0
     prime_number = 89
 
-    key.each_char { |char| hash_code = prime_number * hash_code + char.ord }
+    key.each_char { |char| hash_code = (prime_number * hash_code) + char.ord }
     hash_code
+  end
+
+  def get_hash_index(hash_code)
+    hash_index = hash_code % @capacity
   end
 
   def rehash
@@ -55,25 +63,35 @@ class HashMap
 
   def set(key, value)
     @buckets_in_use += 1
-
     update_capacity
     node_to_insert = Node.new(key, value)
-    hash_code = hash(key)
-    hash_index = hash_code % @capacity
+
+    hash_code = get_hash_code(key)
+    hash_index = get_hash_index(hash_code)
 
     @buckets[hash_index] = node_to_insert
   end
 
   def get(key)
-    hash_code = hash(key)
-    hash_index = hash_code % @capacity
+    hash_code = get_hash_code(key)
+    hash_index = get_hash_index(hash_code)
 
     node_inside = @buckets[hash_index]
 
     return nil if node_inside.nil?
     return unless key == node_inside.key
 
-    # binding.pry
     node_inside.value
+  end
+
+  def has?(key)
+    hash_code = get_hash_code(key)
+    hash_index = get_hash_index(hash_code)
+
+    node_inside = @buckets[hash_index]
+
+    return false if node_inside.nil?
+
+    node_inside.key == key
   end
 end
