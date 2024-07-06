@@ -17,12 +17,46 @@ class HashMap
 
   def to_s
     ret_s = ""
+
+    return "Hashmap is empty" if @buckets.all?(&:nil?)
+
     @buckets.each_with_index do |node, idx|
       next if node.nil?
 
       ret_s << "Node {#{idx}} -> #{node}\n"
     end
     ret_s
+  end
+
+  def length
+    @buckets_in_use
+  end
+
+  def clear
+    @buckets_in_use = 0
+    @buckets.map! { |bucket| bucket = nil }
+  end
+
+  def keys
+    ret_ary = []
+
+    @buckets.each_with_index do |bucket, idx|
+      next if bucket.nil?
+
+      ret_ary << @buckets[idx].key
+    end
+    ret_ary
+  end
+
+  def values
+    ret_ary = []
+
+    @buckets.each_with_index do |bucket, idx|
+      next if bucket.nil?
+
+      ret_ary << @buckets[idx].value
+    end
+    ret_ary
   end
 
   def get_hash_code(key)
@@ -98,6 +132,7 @@ class HashMap
     return nil if @buckets[hash_index].nil?
 
     ret_value = @buckets[hash_index].value
+    @buckets_in_use -= 1
     @buckets[hash_index] = nil
     ret_value
   end
