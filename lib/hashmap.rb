@@ -4,7 +4,7 @@ require "pry-byebug"
 class HashMap
   attr_reader :buckets, :capacity
 
-  def initialize(capacity = 16, load_factor = 0.8)
+  def initialize(capacity = 16, load_factor = 0.75)
     @buckets_in_use = 0
     @buckets = Array.new(capacity, nil)
     @capacity = capacity
@@ -55,6 +55,20 @@ class HashMap
       next if bucket.nil?
 
       ret_ary << @buckets[idx].value
+    end
+    ret_ary
+  end
+
+  def entries
+    ret_ary = []
+
+    @buckets.each_with_index do |bucket, idx|
+      next if bucket.nil?
+      ret_entry = []
+
+      ret_entry << @buckets[idx].key
+      ret_entry << @buckets[idx].value
+      ret_ary << ret_entry
     end
     ret_ary
   end
