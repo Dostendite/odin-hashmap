@@ -78,6 +78,6 @@ puts "Clearing the hashmap"
 p test.clear
 puts
 
-puts "Printing test"
+puts "Printing hashmap"
 puts test
 puts
