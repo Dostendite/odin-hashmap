@@ -34,7 +34,7 @@ class HashMap
   end
 
   def get_hash_index(hash_code)
-    hash_index = hash_code % @capacity
+    hash_code % @capacity
   end
 
   def rehash
@@ -45,7 +45,7 @@ class HashMap
 
       # empty bucket
       @buckets_in_use += 1
-      bucket = nil
+      @buckets[idx] = nil
 
       # rehash
       set(node.key, node.value)
@@ -76,22 +76,29 @@ class HashMap
     hash_code = get_hash_code(key)
     hash_index = get_hash_index(hash_code)
 
-    node_inside = @buckets[hash_index]
+    return nil if @buckets[hash_index].nil?
+    return unless key == @buckets[hash_index].key
 
-    return nil if node_inside.nil?
-    return unless key == node_inside.key
-
-    node_inside.value
+    @buckets[hash_index].value
   end
 
   def has?(key)
     hash_code = get_hash_code(key)
     hash_index = get_hash_index(hash_code)
 
-    node_inside = @buckets[hash_index]
+    return false if @buckets[hash_index].nil?
 
-    return false if node_inside.nil?
+    @buckets[hash_index].key == key
+  end
 
-    node_inside.key == key
+  def remove(key)
+    hash_code = get_hash_code(key)
+    hash_index = get_hash_index(hash_code)
+
+    return nil if @buckets[hash_index].nil?
+
+    ret_value = @buckets[hash_index].value
+    @buckets[hash_index] = nil
+    ret_value
   end
 end
